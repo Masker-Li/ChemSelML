@@ -1,4 +1,5 @@
 # ChemSelML
 A trivial demo of chemical regioselectivity prediction via machine learning
-<br/>
-We have provided a test script in examples. After the project is cloned and downloaded, use jupyter to call physorg_test.ipynb in examples to test and run.
+&nbsp;
+&nbsp;
+We have provided a test script in Examples. After the project is cloned and downloaded, use jupyter to call PhysOrg_test.ipynb in Examples to test and run.

@@ -2,7 +2,7 @@ function [mean_percent_3A,mean_percent_4A,mean_percent_5A,var_percent_3A,var_per
 format short
 clc
 %clear
-%%[sx,sy,sz]=sphere(100);%Éú³ÉÇòµÄ»ù±¾×ø±ê
+%%[sx,sy,sz]=sphere(100);%ç”Ÿæˆçƒçš„åŸºæœ¬åæ ‡
 % coordinate=...;
 % [6                  0.00000000    0.00000000    0.00000000
 % 6                  -2.55424174    2.32441573    -1.68380683
@@ -22,14 +22,14 @@ clc
 % 6                  -1.21755975    1.68649293    -1.22682131
 % 6                  0.03743246    3.40944200    -2.50028907
 % 6                  -1.21915077    0.58059902    -0.41590680
-% 1                  -2.14776427    0.15550885    -0.09672769];%ÉèÖÃÔ­×ÓÖÖÀàºÍ×ø±ê
+% 1                  -2.14776427    0.15550885    -0.09672769];%è®¾ç½®åŸå­ç§ç±»å’Œåæ ‡
 
-%% Ğı×ª·Ö×Ó×ø±ê
-AN=size(coordinate,1);%»ñµÃ·Ö×Ó×ÜÔ­×ÓÊı
-x=coordinate(1:1:AN,2);%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄx×ø±ê
-y=coordinate(1:1:AN,3);%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄy×ø±ê
-z=coordinate(1:1:AN,4);%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄz×ø±ê
-%½øĞĞ·Ö×Ó×ø±êÆ½ÒÆ
+%% æ—‹è½¬åˆ†å­åæ ‡
+AN=size(coordinate,1);%è·å¾—åˆ†å­æ€»åŸå­æ•°
+x=coordinate(1:1:AN,2);%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„xåæ ‡
+y=coordinate(1:1:AN,3);%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„yåæ ‡
+z=coordinate(1:1:AN,4);%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„zåæ ‡
+%è¿›è¡Œåˆ†å­åæ ‡å¹³ç§»
     move_x=x(Atom_label);
     move_y=y(Atom_label);
     move_z=z(Atom_label);
@@ -37,36 +37,36 @@ z=coordinate(1:1:AN,4);%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄz×ø±ê
     y=y-move_y;
     z=z-move_z;
     xyz_new=[x,y,z];
-%½øĞĞ·Ö×ÓÑØzÖáĞı×ª
-%     cent_x=mean(x);%ÕÒµ½·Ö×Óx×ø±êµÄ¼¸ºÎÖĞĞÄ
-%     cent_y=mean(y);%ÕÒµ½·Ö×Óy×ø±êµÄ¼¸ºÎÖĞĞÄ
-%cent_z=mean(z);%ÕÒµ½·Ö×Óz×ø±êµÄ¼¸ºÎÖĞĞÄ
-%     angle_z=-asind(abs(cent_x)/sqrt(cent_x^2+cent_y^2));%ÕÒµ½ÑØzÖáĞı×ªµÄ½Ç¶È
+%è¿›è¡Œåˆ†å­æ²¿zè½´æ—‹è½¬
+%     cent_x=mean(x);%æ‰¾åˆ°åˆ†å­xåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%     cent_y=mean(y);%æ‰¾åˆ°åˆ†å­yåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%cent_z=mean(z);%æ‰¾åˆ°åˆ†å­zåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%     angle_z=-asind(abs(cent_x)/sqrt(cent_x^2+cent_y^2));%æ‰¾åˆ°æ²¿zè½´æ—‹è½¬çš„è§’åº¦
 %     rot_z=...
-%         [cosd(angle_z),sind(angle_z),0;-sind(angle_z),cosd(angle_z),0;0,0,1];%Éú³ÉÑØzÖáµÄĞı×ª¾ØÕó
-%     xyz_new=[x,y,z]*(rot_z);%Éú³ÉĞÂµÄ·Ö×Ó×ø±ê
-%     x=xyz_new(1:1:AN,1);%¸üĞÂ·Ö×ÓµÄx×ø±ê
-%     y=xyz_new(1:1:AN,2);%¸üĞÂ·Ö×ÓµÄy×ø±ê
-%     z=xyz_new(1:1:AN,3);%¸üĞÂ·Ö×ÓµÄz×ø±ê
-%½øĞĞ·Ö×ÓÑØxÖáĞı×ª
-%     %cent_x=mean(x);%ÕÒµ½·Ö×ÓĞÂµÄx×ø±êµÄ¼¸ºÎÖĞĞÄ
-%     cent_y=mean(y);%ÕÒµ½·Ö×ÓĞÂµÄy×ø±êµÄ¼¸ºÎÖĞĞÄ
-%     cent_z=mean(z);%ÕÒµ½·Ö×ÓĞÂµÄz×ø±êµÄ¼¸ºÎÖĞĞÄ
-%     angle_x=-asind(abs(cent_y)/sqrt(cent_y^2+cent_z^2));%ÕÒµ½ÑØyÖáĞı×ªµÄ½Ç¶È
+%         [cosd(angle_z),sind(angle_z),0;-sind(angle_z),cosd(angle_z),0;0,0,1];%ç”Ÿæˆæ²¿zè½´çš„æ—‹è½¬çŸ©é˜µ
+%     xyz_new=[x,y,z]*(rot_z);%ç”Ÿæˆæ–°çš„åˆ†å­åæ ‡
+%     x=xyz_new(1:1:AN,1);%æ›´æ–°åˆ†å­çš„xåæ ‡
+%     y=xyz_new(1:1:AN,2);%æ›´æ–°åˆ†å­çš„yåæ ‡
+%     z=xyz_new(1:1:AN,3);%æ›´æ–°åˆ†å­çš„zåæ ‡
+%è¿›è¡Œåˆ†å­æ²¿xè½´æ—‹è½¬
+%     %cent_x=mean(x);%æ‰¾åˆ°åˆ†å­æ–°çš„xåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%     cent_y=mean(y);%æ‰¾åˆ°åˆ†å­æ–°çš„yåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%     cent_z=mean(z);%æ‰¾åˆ°åˆ†å­æ–°çš„zåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%     angle_x=-asind(abs(cent_y)/sqrt(cent_y^2+cent_z^2));%æ‰¾åˆ°æ²¿yè½´æ—‹è½¬çš„è§’åº¦
 %     rot_x=...
-%         [1,0,0;0,cosd(angle_x),sind(angle_x);0,-sind(angle_x),cosd(angle_x)];%Éú³ÉÑØzÖáµÄĞı×ª¾ØÕó
-%     xyz_new=[x,y,z]*rot_x;%Éú³ÉĞÂµÄ·Ö×Ó×ø±ê
+%         [1,0,0;0,cosd(angle_x),sind(angle_x);0,-sind(angle_x),cosd(angle_x)];%ç”Ÿæˆæ²¿zè½´çš„æ—‹è½¬çŸ©é˜µ
+%     xyz_new=[x,y,z]*rot_x;%ç”Ÿæˆæ–°çš„åˆ†å­åæ ‡
 
-%% ³õÊ¼»¯·Ö×Ó×ø±ê£¬²âÊÔµãÊı¼°²âÊÔ´ÎÊı
-%×îÖÕµÄÓĞ·½ÏòĞÔµÄ·Ö×Ó×ø±ê
-x=xyz_new(1:1:AN,1);%×îÖÕ·Ö×ÓµÄx×ø±ê
-y=xyz_new(1:1:AN,2);%×îÖÕ·Ö×ÓµÄy×ø±ê
-z=xyz_new(1:1:AN,3);%×îÖÕ·Ö×ÓµÄz×ø±ê
-%cent_x=mean(x);%·Ö×Ó×îÖÕµÄx×ø±êµÄ¼¸ºÎÖĞĞÄ
-%cent_y=mean(y);%·Ö×Ó×îÖÕµÄy×ø±êµÄ¼¸ºÎÖĞĞÄ
-%cent_z=mean(z);%·Ö×Ó×îÖÕµÄz×ø±êµÄ¼¸ºÎÖĞĞÄ
-atom=coordinate(1:1:AN,1);%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄÖÖÀà
-atom_rad=atom;%Éú³É·Ö×ÓÖĞËùÓĞÔ­×ÓµÄ·¶µÂ»ª°ë¾¶µÄ³õÊ¼¾ØÕó
+%% åˆå§‹åŒ–åˆ†å­åæ ‡ï¼Œæµ‹è¯•ç‚¹æ•°åŠæµ‹è¯•æ¬¡æ•°
+%æœ€ç»ˆçš„æœ‰æ–¹å‘æ€§çš„åˆ†å­åæ ‡
+x=xyz_new(1:1:AN,1);%æœ€ç»ˆåˆ†å­çš„xåæ ‡
+y=xyz_new(1:1:AN,2);%æœ€ç»ˆåˆ†å­çš„yåæ ‡
+z=xyz_new(1:1:AN,3);%æœ€ç»ˆåˆ†å­çš„zåæ ‡
+%cent_x=mean(x);%åˆ†å­æœ€ç»ˆçš„xåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%cent_y=mean(y);%åˆ†å­æœ€ç»ˆçš„yåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+%cent_z=mean(z);%åˆ†å­æœ€ç»ˆçš„zåæ ‡çš„å‡ ä½•ä¸­å¿ƒ
+atom=coordinate(1:1:AN,1);%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„ç§ç±»
+atom_rad=atom;%ç”Ÿæˆåˆ†å­ä¸­æ‰€æœ‰åŸå­çš„èŒƒå¾·ååŠå¾„çš„åˆå§‹çŸ©é˜µ
 for i=1:1:AN
     if atom(i)==1
         atom_rad(i)=1.2;
@@ -111,7 +111,7 @@ for i=1:1:AN
     elseif atom(i)==35
         atom_rad(i)=1.85;
     end
-end%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄ·¶µÂ»ª°ë¾¶
+end%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„èŒƒå¾·ååŠå¾„
 %SSS=cell(AN,5);
 %for n=1:1:AN
     %SSS{n,1}=n;
@@ -119,38 +119,38 @@ end%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄ·¶µÂ»ª°ë¾¶
     %SSS{n,3}= [sx.*atom_rad(n)+x(n)];
     %SSS{n,4}= [sy.*atom_rad(n)+y(n)];
     %SSS{n,5}= [sz.*atom_rad(n)+z(n)];
-%end%»ñµÃ·Ö×ÓÖĞËùÓĞÔ­×ÓµÄÔ­×Ó±ß½ç×ø±ê·¶Î§
-pointnumber=500000;%¶¨Òå×Ü²âÊÔµãÊıÄ¿
-n_test = 10;%testÒ»¹²½øĞĞ10´Î
+%end%è·å¾—åˆ†å­ä¸­æ‰€æœ‰åŸå­çš„åŸå­è¾¹ç•Œåæ ‡èŒƒå›´
+pointnumber=500000;%å®šä¹‰æ€»æµ‹è¯•ç‚¹æ•°ç›®
+n_test = 10;%testä¸€å…±è¿›è¡Œ10æ¬¡
 
-%% ²âÊÔÇòÌåµÄ°ë¾¶=3A
-test_radius_3=3;%¶¨Òå²âÊÔÇòÌåµÄ°ë¾¶
+%% æµ‹è¯•çƒä½“çš„åŠå¾„=3A
+test_radius_3=3;%å®šä¹‰æµ‹è¯•çƒä½“çš„åŠå¾„
     percent_list_3A = zeros(1,n_test);
     for j=1:1:n_test
         percent_list_3A(j) = Test(test_radius_3,pointnumber,AN,x,y,z,atom_rad);
     end
-    mean_percent_3A = mean(percent_list_3A);%½«10´ÎtestµÃµ½µÄ°Ù·Ö±ÈÊı¾İ½øĞĞÆ½¾ù²¢Êä³ö×÷ÎªÃèÊö·û
-    var_percent_3A = var(percent_list_3A);%½«10´ÎtestµÃµ½µÄ·½²îÊä³ö
+    mean_percent_3A = mean(percent_list_3A);%å°†10æ¬¡testå¾—åˆ°çš„ç™¾åˆ†æ¯”æ•°æ®è¿›è¡Œå¹³å‡å¹¶è¾“å‡ºä½œä¸ºæè¿°ç¬¦
+    var_percent_3A = var(percent_list_3A);%å°†10æ¬¡testå¾—åˆ°çš„æ–¹å·®è¾“å‡º
 
-%% ²âÊÔÇòÌåµÄ°ë¾¶=4A    
-test_radius_4=4;%¶¨Òå²âÊÔÇòÌåµÄ°ë¾¶
+%% æµ‹è¯•çƒä½“çš„åŠå¾„=4A    
+test_radius_4=4;%å®šä¹‰æµ‹è¯•çƒä½“çš„åŠå¾„
     percent_list_4A = zeros(1,n_test);
     for j=1:1:n_test
         percent_list_4A(j) = Test(test_radius_4,pointnumber,AN,x,y,z,atom_rad);
     end
-    mean_percent_4A = mean(percent_list_4A);%½«10´ÎtestµÃµ½µÄ°Ù·Ö±ÈÊı¾İ½øĞĞÆ½¾ù²¢Êä³ö×÷ÎªÃèÊö·û
-    var_percent_4A = var(percent_list_4A);%½«10´ÎtestµÃµ½µÄ·½²îÊä³ö
+    mean_percent_4A = mean(percent_list_4A);%å°†10æ¬¡testå¾—åˆ°çš„ç™¾åˆ†æ¯”æ•°æ®è¿›è¡Œå¹³å‡å¹¶è¾“å‡ºä½œä¸ºæè¿°ç¬¦
+    var_percent_4A = var(percent_list_4A);%å°†10æ¬¡testå¾—åˆ°çš„æ–¹å·®è¾“å‡º
 
-%% ²âÊÔÇòÌåµÄ°ë¾¶=5A    
-test_radius_5=5;%¶¨Òå²âÊÔÇòÌåµÄ°ë¾¶
+%% æµ‹è¯•çƒä½“çš„åŠå¾„=5A    
+test_radius_5=5;%å®šä¹‰æµ‹è¯•çƒä½“çš„åŠå¾„
     percent_list_5A = zeros(1,n_test);
     for j=1:1:n_test
         percent_list_5A(j) = Test(test_radius_5,pointnumber,AN,x,y,z,atom_rad);
     end
-    mean_percent_5A = mean(percent_list_5A);%½«10´ÎtestµÃµ½µÄ°Ù·Ö±ÈÊı¾İ½øĞĞÆ½¾ù²¢Êä³ö×÷ÎªÃèÊö·û
-    var_percent_5A = var(percent_list_5A);%½«10´ÎtestµÃµ½µÄ·½²îÊä³ö
+    mean_percent_5A = mean(percent_list_5A);%å°†10æ¬¡testå¾—åˆ°çš„ç™¾åˆ†æ¯”æ•°æ®è¿›è¡Œå¹³å‡å¹¶è¾“å‡ºä½œä¸ºæè¿°ç¬¦
+    var_percent_5A = var(percent_list_5A);%å°†10æ¬¡testå¾—åˆ°çš„æ–¹å·®è¾“å‡º
 
-%% ×Óº¯Êı¶¨Òå£¬²ÉÓÃÃÉÌØ¿¨Âå·½·¨ÊµÏÖ
+%% å­å‡½æ•°å®šä¹‰ï¼Œé‡‡ç”¨è’™ç‰¹å¡æ´›æ–¹æ³•å®ç°
     function percent = Test(test_radius,pointnumber,AN,x,y,z,atom_rad)
         phi = 2*pi.*rand(pointnumber,1);
         costheta = -1 + 2.*rand(pointnumber,1);
@@ -166,7 +166,7 @@ test_radius_5=5;%¶¨Òå²âÊÔÇòÌåµÄ°ë¾¶
         count = zeros(pointnumber,1);
         for n=1:1:pointnumber
             for t=1:1:AN
-                if (test_x(n)-x(t))^2+(test_y(n)-y(t))^2+(test_z(n)-z(t))^2<=atom_rad(t)^2%ÅĞ¶ÏµãÊÇ·ñÔÚÔ­×Ó°ë¾¶·¶Î§ÄÚ
+                if (test_x(n)-x(t))^2+(test_y(n)-y(t))^2+(test_z(n)-z(t))^2<=atom_rad(t)^2%åˆ¤æ–­ç‚¹æ˜¯å¦åœ¨åŸå­åŠå¾„èŒƒå›´å†…
                     count(n) = count(n) | 1;
                     break;
                 end

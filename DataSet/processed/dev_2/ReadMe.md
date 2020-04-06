@@ -1,4 +1,4 @@
-Due to the size of the file, we have compressed and split the training set data file and the model trained by PhysOrg-RF model:   
+Due to the size of the file, we have compressed and split the training set data file and the model file trained by PhysOrg-RF:   
   - MolGraph_Ar_dev_2.pt  
   - MolGraph_R_dev_2.pt  
   - ReactionDataset_ArR_dev_2.pt   

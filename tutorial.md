@@ -107,21 +107,21 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   Those structure files could be available from the **Desc_gas_sp folder in Part 1** with suffix of **sp.gjf** and **sp.log**.
   3. PhysOrg descriptors file (Ar_phychem.csv and R_phychem.csv) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
   4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the atomic order number of the reaction site in heterocycle **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0.  
-    - The schema of the entire sub folder is as follows:  
-            -- DataSet/raw/test_sub
-              |-- Ar  
-              |  |-- gjfs_and_logs  
-              |  |   |-- Ar1.gjf
-              |  |   |-- Ar1.log  
-              |  |-- Ar_phychem.csv  
-              |-- R  
-              |  |-- gjfs_and_logs  
-              |  |   |-- R1.gjf
-              |  |   |-- R1.log  
-              |  |-- R_phychem.csv
-              |-- TestSet_Label.csv
-    - We have shown the location and contents of relevant documents in **./DataSet/raw/test_sub** folder
-    - It is worth noting that the information such as **Ar_n, loc_n and Radical_n** in the label file needs to be recorded in the precursor folders Ar and R as described in the previous steps.
+      - The schema of the entire sub folder is as follows:  
+                  -- DataSet/raw/test_sub
+                    |-- Ar  
+                    |  |-- gjfs_and_logs  
+                    |  |   |-- Ar1.gjf
+                    |  |   |-- Ar1.log  
+                    |  |-- Ar_phychem.csv  
+                    |-- R  
+                    |  |-- gjfs_and_logs  
+                    |  |   |-- R1.gjf
+                    |  |   |-- R1.log  
+                    |  |-- R_phychem.csv
+                    |-- TestSet_Label.csv
+      - We have shown the location and contents of relevant documents in **./DataSet/raw/test_sub** folder
+      - It is worth noting that the information such as **Ar_n, loc_n and Radical_n** in the label file needs to be recorded in the precursor folders Ar and R as described in the previous steps.
 
   5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** in the project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**, which includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
   6. For training task, the created folder names should start with **dev_** and followed by your own suffix identifier, such as **dev_2** and label file should be named with **TrainSet.csv**. And the **test_sub** in the corresponding filename and directory path described in the previous steps will change to **dec_2**.   
@@ -135,11 +135,11 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   We show in detail the use of the model screening and predictor training functions in the **./Example/part_4** folder.
   2. For model selection, we've put the relevant code in **./Example/part_4/Benchmark.ipynb**.We have selected different regressors or classifiers according to the requirements to conduct 5-fold cross-validation tests on various combinations of features to compare the performance of each model.
   3. And for model training and test case, we show in detail the training, saving, retuning, and prediction of the entire functional block of the **PhysOrg-RF** and **SOAP/FP(MMFF84)-XGB** models. It is easy for everyone to understand and use. We've put the relevant code in **./Example/part_4/PhysOrg-RF.ipynb** and **./Example/part_4/SOAP/FP(MMFF84)-XGB.ipynb**.   
-    - PS.    
-      We provide an output sample, which is placed in the example folder
-      csv output file description:
-          \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.
-          \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model
+        - PS.    
+          We provide an output sample, which is placed in the example folder
+          csv output file description:
+              \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.
+              \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model
 
 
   We have trained models that can be used directly for prediction, but the models are too large to upload to github, and you can email us if you need to get them directly for prediction. The email address is li.xin@zju.edu.cn

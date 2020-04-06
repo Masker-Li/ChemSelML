@@ -1,6 +1,6 @@
 Since the training set involves a lot of files, we just give the pt files in **../../processed/dev_2** folder.
 
-Once we get the Pt file, we no longer need the structure file in **Ar/gjfs_and_logs** and **R/gjfs_and_logs**.  
+Once we get the pt file, we no longer need the structure file in **Ar/gjfs_and_logs** and **R/gjfs_and_logs**.  
 
 There are enough files left in this folder for training now.
 

@@ -46,14 +46,14 @@ These packages can be installed directly in batches using CONDA:
     - Tips:  
       - In order to use the scripts for the property calculations, it is recommended that the input files are named in the following format.   
                 For heterocycles:     
-                  Ar_n-loc_n-c1-1sp.gjf (such as X4t-1-c1-1sp.gjf)  
-                  (Ar_n means the heterocycle's alias,
-                  loc_n means one of the atomic order number of the reaction site in heterocycle,
-                  c1 means the first conformation，
-                  and the sp suffix indicates that it is a single point calculation file.)
+                    Ar_n-loc_n-c1-1sp.gjf (such as X4t-1-c1-1sp.gjf)  
+                    (Ar_n means the heterocycle's alias,
+                    loc_n means one of the atomic order number of the reaction site in heterocycle,
+                    c1 means the first conformation，
+                    and the sp suffix indicates that it is a single point calculation file.)
                 For Radicals:       
-                  R_n-c1-1sp.gjf (such as CF3-c1-1sp.gjf)
-      - For easy extraction of local descriptors, please add the atomic order number of the reaction site to the title line of the heterocycle's input file.   
+                    R_n-c1-1sp.gjf (such as CF3-c1-1sp.gjf)
+      - For easy extraction of local descriptors, please add the atomic order number of the reaction site to the title line of the heterocycle's input file.     
                   For example:    
                   in the fifth line of **./Example/part_1/Sub/Ar/X4t-1-c1-1sp.gjf**,    
                   1 and 3 means the first and third atomic order number of the reaction    
@@ -76,7 +76,7 @@ These packages can be installed directly in batches using CONDA:
   3. Copy the **Descriptors_input_trans_new.py** and **Input_Make_NICS.py** scripts from the **./ChemUtils/test** folder to that **directory A** (for example: **./Example/part_1/Sub/Ar**) and run them separately to get new Gaussian input files of a quantitative properties, which are placed in the **Desc_gas_sp** and **NICS** folders, respectively.In particular, for free radicals, there is no need to run the **Input_Make_NICS.py** script.
   4. Submit files from these two folders to Gaussian Software for calculation and place the resulting output files in the same directory.
   5. Copy **get_PhysOrg.py** to the **Desc_gas_sp and NICS's parent directory A** (for example: **./Example/part_1/Sub/Ar**). Edit **get_PhysOrg.py** and **change the folder absolute path of the project to the  ChemUtils's parent folder (for example the folder absolute path of this tutorial file) in the third line**, then save and close this file. Run it and therein will automatically generate the PhysOrg descriptor in the current directory in the **phychem.csv** file (**for example: ./Example/part_1/Sub/Ar/Ar_phychem.csv**).
-    - The purpose of rewriting the third line is to add the absolute path of the directory where ChemUtils is located to the python package search path   
+      - The purpose of rewriting the third line is to add the absolute path of the directory where ChemUtils is located to the python package search path   
 
       >import os  
       >import sys  
@@ -108,7 +108,7 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   3. PhysOrg descriptors file (Ar_phychem.csv and R_phychem.csv) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
   4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the atomic order number of the reaction site in heterocycle **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0.  
       - The schema of the entire sub folder is as follows:  
-                          -- DataSet/raw/test_sub
+                         -- DataSet/raw/test_sub
                             |-- Ar  
                             |  |-- gjfs_and_logs  
                             |  |   |-- Ar1.gjf

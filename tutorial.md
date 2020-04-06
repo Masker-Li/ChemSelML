@@ -1,3 +1,8 @@
+ChemSelML
+=====        
+### A trivial demo of chemical regioselectivity prediction via machine learning        
+<br>     
+     
 <!-- TOC START min:1 max:3 link:true asterisk:false update:true -->
 - [Project Requirements](#project-requirements)
 - [Project Features and User Guide](#project-features-and-user-guide)

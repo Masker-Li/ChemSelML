@@ -5,7 +5,7 @@ Due to the size of the file, we have compressed the training set data file and t
   - SelectivityDataset_ArR_dev_2.pt
   - models_pkg/Predictor_SOAP_fp@XGB_Reg_20200328_035409.pkl
 
-And you could execute the following command to restore the original file:  
+And you could execute the following command to restore the original file with bash shell command:  
          
     unzip MolGraph_Ar_dev_2.zip    
     unzip MolGraph_R_dev_2.zip    

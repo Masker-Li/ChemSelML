@@ -126,7 +126,7 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** in the project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**, which includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
   6. For training task, the created folder names should start with **dev_** and followed by your own suffix identifier, such as **dev_2** and label file should be named with **TrainSet.csv**. And the **test_sub** in the corresponding filename and directory path described in the previous steps will change to **dec_2**.   
 
-    - We provide the complete training set with the required files in the **./Dataset/processed/dev_2** folder and **./Dataset/raw/dev_2** folder      
+      - We provide the complete training set with the required files in the **./Dataset/processed/dev_2** folder and **./Dataset/raw/dev_2** folder      
 
 ## part 4.
 **Model selection, training and testing**

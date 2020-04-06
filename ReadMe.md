@@ -174,3 +174,7 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
               \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.   
               \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model   
 
+
+# Contact Us
+
+Email: hxchem@zju.edu.cn; li.xin@zju.edu.cn 

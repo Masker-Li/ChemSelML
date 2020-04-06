@@ -8,6 +8,8 @@ from sklearn import linear_model
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 from xgboost import XGBRegressor
 
 #XGBoost

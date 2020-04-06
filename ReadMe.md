@@ -119,7 +119,7 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the atomic order number of the reaction site in heterocycle **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0.  
       - The schema of the entire sub folder is as follows:  
                          
-             -- DataSet/raw/test_sub
+              -- DataSet/raw/test_sub
                 |-- Ar  
                 |  |-- gjfs_and_logs  
                 |  |   |-- Ar1.gjf

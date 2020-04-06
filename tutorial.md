@@ -129,6 +129,28 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
       - It is worth noting that the information such as **Ar_n, loc_n and Radical_n** in the label file needs to be recorded in the precursor folders Ar and R as described in the previous steps.
 
   5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** in the project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**, which includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
+        
+         `import numpy as np
+          import pandas as pd
+          import torch
+
+          import os
+          import sys
+          # Add the absolute path of the directory where ChemSelML is located to the python package search path
+          sys.path.append("/PyScripts/PyTorch.dir/Radical")
+
+          from ChemSelML.bin.ChemSelectivityDataset import ReactionDataset, SelectivityDataset
+
+          # '/PyScripts/PyTorch.dir/Radical/DataSet' corresponds to the "../DataSet" directory in this project.
+          # mode corresponds to the folder name in "../DataSet/raw"
+          dev2_ArR_dataset = ReactionDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
+          print(dev2_ArR_dataset,'\n')
+          print(dev2_ArR_dataset.data,'\n')
+
+          dev2_ArR_DDG_dataset = SelectivityDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
+          print(dev2_ArR_DDG_dataset,'\n')
+          print(dev2_ArR_DDG_dataset.data,'\n')`   
+          
   6. For training task, the created folder names should start with **dev_** and followed by your own suffix identifier, such as **dev_2** and label file should be named with **TrainSet.csv**. And the **test_sub** in the corresponding filename and directory path described in the previous steps will change to **dec_2**.   
 
       - We provide the complete training set with the required files in the **./Dataset/processed/dev_2** folder and **./Dataset/raw/dev_2** folder      
@@ -142,8 +164,8 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   3. And for model training and test case, we show in detail the training, saving, retuning, and prediction of the entire functional block of the **PhysOrg-RF** and **SOAP/FP(MMFF84)-XGB** models. It is easy for everyone to understand and use. We've put the relevant code in **./Example/part_4/PhysOrg-RF.ipynb** and **./Example/part_4/SOAP/FP(MMFF84)-XGB.ipynb**.   
         - PS.    
                 
-                We provide an output sample, which is placed in the example folder
-                csv output file description:   
-                    \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.   
-                    \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model   
+          We provide an output sample, which is placed in the example folder
+          csv output file description:   
+              \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.   
+              \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model   
 

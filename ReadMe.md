@@ -10,6 +10,7 @@ ChemSelML
   - [Part 2](#part-2)
   - [Part 3.](#part-3)
   - [part 4.](#part-4)
+- [Contact Us](#contact-us)
 <!-- TOC END -->
 
 # Project Requirements

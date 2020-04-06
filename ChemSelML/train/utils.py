@@ -257,6 +257,8 @@ def get_Regioselectivity_sort(Group_data, neg_DDG_cutoff=1.42):
     for R in Rs[:]:
         for Ar in Ars[:]:
             ArR_mol = Group_data.loc[Ar, R]
+            if ArR_mol.isnull().all():
+                continue
             loc1 = ArR_mol.index.levels[0].take(ArR_mol.index.codes[0])
             loc2 = ArR_mol.index.levels[1].take(ArR_mol.index.codes[1])
             loc_index = list(np.unique(np.append(loc1, loc2)))

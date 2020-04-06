@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import learning_curve
 from sklearn.externals import joblib
 import pickle
+from ..bin.Label2Idx import get_Ar_R_dict
 from ..train.training import get_data
 from ..train.training import get_CV_res
 from ..train.utils import get_RFECV_result, get_pred_data, actual_vs_pred
@@ -20,7 +21,8 @@ class ChemSel_Predictor:
              processed_dir=None, suffix=None, reloadTimestamp=None):
         assert mode in ['DG_R', 'DDG_R',
                         'DDG_C'], 'mode should in DG_R/DDG_R/DDG_C'
-        self.dataset = dataset
+        self.dataset = dataset.data
+        self.dict_src_path = dataset.raw_paths[0]
         self.model = model
         self.features = features
         self.mode = mode
@@ -61,9 +63,7 @@ class ChemSel_Predictor:
     # Start RFECV
     def RFECV_Train(self):
         model_folder = 'models_pkg'
-        if os.path.isdir(r"%s/%s" % (self.processed_dir, model_folder)) == False:
-            os.makedirs(r"%s/%s" % (self.processed_dir, model_folder))
-
+        
         if self.reloadTimestamp == None:
             #loc1 = np.where(y==y.min())
             #loc2 = np.where(y==y.max())
@@ -71,16 +71,22 @@ class ChemSel_Predictor:
             #y2 = np.delete(y, [loc1, loc2])
 
             self.selector = get_RFECV_result(self.model, self.X, self.y, self.n_jobs)
-            save_path = r'%s/%s/FinalModel_%s_%s.pkl'% (self.processed_dir, 
-                                        model_folder, self.suffix, self.LoadDataTime)
+            dst_path = r"%s/%s/%s" % (self.processed_dir, model_folder, self.LoadDataTime)
+            if os.path.isdir(dst_path) == False:
+                os.makedirs(dst_path)
+
+            tail = r'%s_%s'%(self.suffix, self.LoadDataTime)
+            save_path = r'%s/FinalModel_%s.pkl'% (dst_path, tail)
             joblib.dump(self.selector, save_path)            
         else:
-            save_path = r'%s/%s/FinalModel_%s_%s.pkl'%(self.processed_dir, 
-                                        model_folder, self.suffix, self.reloadTimestamp)
+            self.LoadDataTime = self.reloadTimestamp
+            dst_path = r"%s/%s/%s" % (self.processed_dir, model_folder, self.LoadDataTime)
+            tail = r'%s_%s'%(self.suffix, self.LoadDataTime)
+            save_path = r'%s/FinalModel_%s.pkl'% (dst_path, tail)
             self.selector = joblib.load(save_path)
             self.RFECV_f1_score = self.selector.grid_scores_[
                 self.selector.grid_scores_.argmax()]
-            self.LoadDataTime = self.reloadTimestamp
+            
         print(save_path)
 
     def _get_learning_curve(self, notitle=False):
@@ -97,23 +103,34 @@ class ChemSel_Predictor:
                                   'test_scores': test_scores, 'fit_times': fit_times,
                                   'title': title, 'ylim': (0.7, 1.01)}
 
-    def _get_prediction(self, idx, X, y):
-        idx, y_true, y_pred, Models = get_pred_data(self.selector, idx, X, y)
+    def _get_prediction(self, idx, X, y, dict_src_path, mode='Train'):
+        Ar_dict_inverse, R_dict_inverse = get_Ar_R_dict(
+            dict_src_path, reverse_dict=True)
+        if mode == 'Train':
+            idx, y_true, y_pred, Models = get_pred_data(self.selector, idx, X, y)
+            self.Models = Models
+        elif mode == 'Test':
+            _num = self.selector.cv.n_splits
+            idx, y_true = np.tile(idx,_num), np.tile(y,_num)
+            y_pred = np.concatenate([self.Models[i].predict(self.selector.transform(X)) 
+                                     for i in range(_num)])
 
         pred_dict = {'idx': idx, 'y_true': y_true, 'y_pred': y_pred}
         pred_df = pd.DataFrame.from_dict(pred_dict)
         columns = list(pred_df.columns)
         # S R Ar loc1 loc2 for X XX XXX X X
-        pred_df['R'] = pred_df['idx']//100000 % 100
+        R_idx = pred_df['idx']//100000 % 100
+        pred_df['R'] = R_idx.apply(lambda x: R_dict_inverse[x])
         # S R Ar loc1 loc2 for X XX XXX X X
-        pred_df['Ar'] = pred_df['idx'] % 100000//100
+        Ar_idx = pred_df['idx'] % 100000//100
+        pred_df['Ar'] = Ar_idx.apply(lambda x: Ar_dict_inverse[x])
         # S R Ar loc1 loc2 for X XX XXX X X
-        pred_df['loc1'] = pred_df['idx'] % 100//10
+        pred_df['loc1'] = pred_df['idx'] % 100//10 + 1
         # S R Ar loc1 loc2 for X XX XXX X X
-        pred_df['loc2'] = pred_df['idx'] % 10
+        pred_df['loc2'] = pred_df['idx'] % 10 + 1
         columns = columns[0:1] + ['Ar', 'R', 'loc1', 'loc2'] + columns[1:]
         pred_df = pred_df[columns]
-        pred_df = pred_df.astype({'Ar': 'int32', 'R': 'int32', 'loc1': 'int32', 'loc2': 'int32'})
+        pred_df = pred_df.astype({'idx': 'int32', 'loc1': 'int32', 'loc2': 'int32'})
         pred_df.set_index('idx', inplace=True)
 
         ArR_df, ArR_df_sel = actual_vs_pred(pred_df, neg_DDG_cutoff=1.42)
@@ -125,67 +142,60 @@ class ChemSel_Predictor:
 
     # Plot number of features VS. cross-validation scores
     def get_training_result(self, storage_folder='TrainSet_result', notitle=False):
-        if os.path.isdir(r"%s/%s" % (self.processed_dir, storage_folder)) == False:
-            os.makedirs(r"%s/%s" % (self.processed_dir, storage_folder))
+        dst_path = r"%s/%s/%s" % (self.processed_dir, storage_folder, self.LoadDataTime)
+        tail = r'%s_%s'%(self.suffix, self.LoadDataTime)
+        if os.path.isdir(dst_path) == False:
+            os.makedirs(dst_path)
 
         if not hasattr(self, 'LearnCurve_kwargs'):
             self._get_learning_curve(notitle=notitle)
-        plot_learning_curve(**self.LearnCurve_kwargs, figure_file=r'%s/%s/LearningCurve_%s_%s.png' % (
-            self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+        plot_learning_curve(**self.LearnCurve_kwargs, figure_file=r'%s/LearningCurve_%s.png' % (dst_path, tail))
 
-        Plot_RFECV(self.selector, figure_file=r'%s/%s/RFECV_FeatureSelection_%s_%s.png' % (
-            self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+        Plot_RFECV(self.selector, figure_file=r'%s/RFECV_FeatureSelection_%s.png' % (dst_path, tail))
 
         Barh_Feature_Ranking(self.selector, best_k=15,
-                             figure_file=r'%s/%s/RFECV_FeatureRanking_%s_%s_best15.png' % (
-                                 self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+                             figure_file=r'%s/RFECV_FeatureRanking_%s_best15.png' % (dst_path, tail))
         # all feature ranking
         Barh_Feature_Ranking(self.selector, best_k=None,
-                             figure_file=r'%s/%s/RFECV_FeatureRanking_%s_%s_all.png' % (
-                                 self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+                             figure_file=r'%s/RFECV_FeatureRanking_%s_all.png' % (dst_path, tail))
 
         if not hasattr(self, 'pred_df'):
-            res_dict = self._get_prediction(self.idx, self.X, self.y)
+            res_dict = self._get_prediction(self.idx, self.X, self.y, self.dict_src_path)
             for k, value in res_dict.items():
                 self.__dict__[k] = value
-            self.pred_df.to_csv(r'%s/%s/TrainSet_DDG_Pred_site_vs_site_%s_%s.csv' % (
-                self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
-            self.ArR_df.to_csv(r'%s/%s/TrainSet_DDG_Pred_ArR_site_sort_%s_%s.csv' % (
-                self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
-            self.ArR_df_sel.to_csv(r'%s/%s/TrainSet_selection_Pred_ArR_site_sort_%s_%s.csv' % (
-                self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+            self.pred_df.to_csv(r'%s/TrainSet_DDG_Pred_site_vs_site_%s.csv' % (dst_path, tail))
+            self.ArR_df.to_csv(r'%s/TrainSet_DDG_Pred_ArR_site_sort_%s.csv' % (dst_path, tail))
+            self.ArR_df_sel.to_csv(r'%s/TrainSet_selection_Pred_ArR_site_sort_%s.csv' % (dst_path, tail))
 
         title = self.suffix if not notitle else None
         Plot_True_vs_Pred(self.y_true, self.y_pred, title=title,
-                          figure_file=r'%s/%s/True_vs_Pred_%s_%s.png' % (
-                              self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+                          figure_file=r'%s/True_vs_Pred_%s.png' % (dst_path, tail))
         print('site_acc: ', self.site_acc)
         print('degree_acc: ', self.degree_acc)
         
 
     def get_test_result(self, test_dataset=None, suffix='TestSet', storage_folder='TestSet_result', notitle=False):
-        if os.path.isdir(r"%s/%s" % (self.processed_dir, storage_folder)) == False:
-            os.makedirs(r"%s/%s" % (self.processed_dir, storage_folder))
+        dst_path = r"%s/%s/%s" % (self.processed_dir, storage_folder, self.LoadDataTime)
+        tail = r'%s_%s_%s'%(suffix, self.suffix, self.LoadDataTime)
+        if os.path.isdir(dst_path) == False:
+            os.makedirs(dst_path)
 
         try:
-            self.Load_test_data(test_dataset)
+            test_dict_src_path = test_dataset.raw_paths[0]
+            self.Load_test_data(test_dataset.data)
             tidx, X, y = self.tidx, self.tX, self.ty
         except:
             print(r'Wrong: test_dataset Mismatched, please input a test_dataset!')
 
         if not hasattr(self, 'test_pred'):
-            self.test_pred = self._get_prediction(tidx, X, y)
-            self.test_pred['pred_df'].to_csv(r'%s/%s/TestSet_DDG_Pred_site_vs_site_%s_%s_%s.csv' % (
-                self.processed_dir, storage_folder, suffix, self.suffix, self.LoadDataTime))
-            self.test_pred['ArR_df'].to_csv(r'%s/%s/TestSet_DDG_Pred_ArR_site_sort_%s_%s_%s.csv' % (
-                self.processed_dir, storage_folder, suffix, self.suffix, self.LoadDataTime))
-            self.test_pred['ArR_df_sel'].to_csv(r'%s/%s/TestSet_selection_Pred_ArR_site_sort_%s_%s_%s.csv' % (
-                self.processed_dir, storage_folder, suffix, self.suffix, self.LoadDataTime))
+            self.test_pred = self._get_prediction(tidx, X, y, test_dict_src_path, mode='Test')
+            self.test_pred['pred_df'].to_csv(r'%s/TestSet_DDG_Pred_site_vs_site_%s.csv' % (dst_path, tail))
+            self.test_pred['ArR_df'].to_csv(r'%s/TestSet_DDG_Pred_ArR_site_sort_%s.csv' % (dst_path, tail))
+            self.test_pred['ArR_df_sel'].to_csv(r'%s/TestSet_selection_Pred_ArR_site_sort_%s.csv' % (dst_path, tail))
 
         title = '%s_%s'%(suffix, self.suffix) if not notitle else None
         Plot_True_vs_Pred(self.test_pred['y_true'], self.test_pred['y_pred'], title=title,
-                          figure_file=r'%s/%s/True_vs_Pred_%s_%s.png' % (
-            self.processed_dir, storage_folder, self.suffix, self.LoadDataTime))
+                          figure_file=r'%s/True_vs_Pred_%s.png' % (dst_path, tail))
         print('test_site_acc: ', self.test_pred['site_acc'])
         print('test_degree_acc: ', self.test_pred['degree_acc'])
         
@@ -197,7 +207,7 @@ class ChemSel_Predictor:
                                              filename, self.suffix, self.LoadDataTime)
         print(fn)
         with open(fn,'wb') as f:
-            pickle.dump(Predictor,f,0)  
+            pickle.dump(Predictor,f,4)  
     
     def load_from_pkl(self, filename='Predictor', storage_folder='models_pkg'):
         if os.path.isdir(r"%s/%s" % (self.processed_dir, storage_folder)) == False:

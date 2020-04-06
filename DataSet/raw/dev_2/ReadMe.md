@@ -4,5 +4,5 @@ Once we get the pt file, we no longer need the structure file in **Ar/gjfs_and_l
 
 There are enough files left in this folder for training now.
 
-PS.
+- PS.
     **Ar/Ar_dict.json** and **R/R_dict.json** are generated automatically in the process of generating the pt file, no need to prepare it yourself, and do not delete it at will. 

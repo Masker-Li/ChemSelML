@@ -23,63 +23,18 @@ from molml.features import BagOfBonds
 from ..bin.GaussianOutputFileReader import Gaussian_Output
 from ..bin.featurization import get_acsf_features, get_CoulombMatrix, get_SOAP, PhyChem
 from ..bin.featurization import get_RDKit, atomic_para
+from ..bin.Label2Idx import Ar_dict_generator, R_dict_generator
 
 
-def label2num(label,mode='Ar'):
+def label2num(label, mode='Ar', src_dir=None):
     assert mode in ['Ar', 'R'], "mode should be Ar/R"
-    R_dict = {
-        "CCN":  61 , "CF2":  62 , "CF3":  63 , "CFM":  64 , "CH3":  65 , 
-        "CHF":  66 , "Et0":  67 , "ipr":  68 , "MF3":  69 ,  "Ph":  70 ,
-        "Py0":  71 , "tBu":  72 , "TF3":  73 ,
-        }
     
-    Ar_dict = {
-          "A0h" : 101 ,   "A1c" : 102 ,   "A1d" : 103 ,   "B0h" : 111 ,   "B1c" : 112 , 
-          "B1d" : 113 ,   "B2c" : 114 ,   "B2d" : 115 ,   "C0h" : 121 ,   "C1c" : 122 , 
-          "C1d" : 123 ,   "C2c" : 124 ,   "C2d" : 125 ,   "D0h" : 131 ,   "D1c" : 132 , 
-          "D1d" : 133 ,   "D2c" : 134 ,   "D2d" : 135 ,   "E0h" : 141 ,   "E1c" : 142 , 
-          "E1d" : 143 ,   "E2c" : 144 ,   "E2d" : 145 ,   "F0h" : 151 ,   "F1c" : 152 , 
-          "F1d" : 153 ,   "F2c" : 154 ,   "F2d" : 155 ,   "F3c" : 156 ,   "F3d" : 157 , 
-          "Fb0" : 161 ,  "Fb3c" : 162 ,  "Fb3d" : 163 ,  "Fb4c" : 164 ,  "Fb4d" : 165 , 
-         "Fb5c" : 166 ,  "Fb5d" : 167 ,   "Fc0" : 171 ,  "Fc2c" : 172 ,  "Fc2d" : 173 , 
-         "Fc4c" : 174 ,  "Fc4d" : 175 ,  "Fc5c" : 176 ,  "Fc5d" : 177 ,   "Fd0" : 181 , 
-         "Fd3c" : 182 ,  "Fd3d" : 183 ,  "Fd4c" : 184 ,  "Fd4d" : 185 ,  "Fd5c" : 186 , 
-         "Fd5d" : 187 ,   "Fe0" : 191 ,  "Fe2c" : 192 ,  "Fe2d" : 193 ,  "Fe4c" : 194 , 
-         "Fe4d" : 195 ,  "Fe5c" : 196 ,  "Fe5d" : 197 ,   "Ff0" : 201 ,  "Ff3c" : 202 , 
-         "Ff3d" : 203 ,  "Ff4c" : 204 ,  "Ff4d" : 205 ,  "Ff5c" : 206 ,  "Ff5d" : 207 , 
-          "G0h" : 211 ,   "G1c" : 212 ,   "G1d" : 213 ,   "G2c" : 214 ,   "G2d" : 215 , 
-          "G3c" : 216 ,   "G3d" : 217 ,  "G0hH" : 221 ,  "G1cH" : 222 ,  "G1dH" : 223 , 
-         "G2cH" : 224 ,  "G2dH" : 225 ,  "G3cH" : 226 ,  "G3dH" : 227 ,   "H0h" : 231 , 
-         "H01c" : 232 ,  "H01d" : 233 ,  "H0hH" : 241 , "H01cH" : 242 , "H01dH" : 243 , 
-        "H0hH-c2" : 251 , "H01cH-c2" : 252 , "H01dH-c2" : 253 , 
-         "HFa0" : 261 , "HFa2c" : 262 , "HFa2d" : 263 , "HFa4c" : 264 , "HFa4d" : 265 , 
-        "HFa5c" : 266 , "HFa5d" : 267 ,  "HFb0" : 271 , "HFb3c" : 272 , "HFb3d" : 273 , 
-        "HFb4c" : 274 , "HFb4d" : 275 , "HFb5c" : 276 , "HFb5d" : 277 ,  "HFc0" : 281 , 
-        "HFc2c" : 282 , "HFc2d" : 283 , "HFc4c" : 284 , "HFc4d" : 285 , "HFc5c" : 286 , 
-        "HFc5d" : 287 ,  "HFd0" : 291 , "HFd3c" : 292 , "HFd3d" : 293 , "HFd4c" : 294 , 
-        "HFd4d" : 295 , "HFd5c" : 296 , "HFd5d" : 297 ,  "HFe0" : 301 , "HFe2c" : 302 ,
-        "HFe2d" : 303 , "HFe4c" : 304 , "HFe4d" : 305 , "HFe5c" : 306 , "HFe5d" : 307 ,
-         "HFf0" : 311 , "HFf3c" : 312 , "HFf3d" : 313 , "HFf4c" : 314 , "HFf4d" : 315 ,
-        "HFf5c" : 316 , "HFf5d" : 317 ,   "I0h" : 321 ,   "I1c" : 322 ,   "I1d" : 323 ,
-         "I0hH" : 331 ,  "I1cH" : 332 ,  "I1dH" : 333 ,
-        "I0hH-c2" : 341 , "I1cH-c2" : 342 , "I1dH-c2" : 343 ,
-            "J0h" : 361,  "I1cH-c3" : 352 , "I1dH-c3" : 353,
-        
-        "O2a": 401, "O2aH": 402,  "P4b": 411,  "P4bH": 412,  "P4c": 413, 
-        "P4cH": 414,  "P4d": 415,  "P4dH": 416,  "P4e": 417,  "P4eH": 418, 
-        "P4f": 419,  "P4fH": 420,  "Q1a": 421,  "R4g": 431,  "R4gH": 432, 
-        "R4gH-c2": 433,  "R4h": 434, "R4hH": 435, "R4hH-c2": 436,
-        "R4i": 437,  "R4iH": 438,  "R4iH-c2": 439,  "S1b": 441,  "S1h": 442, 
-        "T2j": 451,  "T2jH": 452,  "T2jH-c2": 453,  "U2k": 461,  "U2kH": 462, 
-        
-        "D1f": 501, "D2f": 502, "G1n": 511, "G1nH": 512, "G2g": 513,
-        "G2gH": 514, "G2m": 515, "G2mH": 516, "G2n": 517, "G2nH": 518,
-        "G3c": 519, "G3cH": 520, "G3e": 521, "G3eH": 522, "G3f": 523,
-        "G3fH": 524, "K1e": 531, "K1eH": 532, "L1d": 541, "O4n": 551,
-        "O4nH": 552, "O4t": 553, "O4tH": 554, "O5n": 555, "O5nH": 556,
-        "P7s": 561, "P7sH": 562,
-        }
-    return R_dict[label] if mode == 'R' else Ar_dict[label]
+    if mode=='Ar':
+        Ar_dict = Ar_dict_generator(src_dir=src_dir)
+        return Ar_dict[label]
+    else:
+        R_dict = R_dict_generator(src_dir=src_dir)
+        return R_dict[label]
 
 class BaseDataset(InMemoryDataset):
     fdef_name = osp.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')
@@ -100,7 +55,10 @@ class BaseDataset(InMemoryDataset):
     @property
     def processed_file_names(self):
         suffix = '_%s'%self.suffix if self.suffix else None
-        return 'MolGraph_%s%s.pt' % (self.mode, suffix)
+        if self.suffix:
+            return '%s/MolGraph_%s%s.pt' % (self.suffix, self.mode, suffix)
+        else:
+            return 'MolGraph_%s%s.pt' % (self.mode, suffix)
 
     def download(self):
         return 0
@@ -228,10 +186,10 @@ class BaseDataset(InMemoryDataset):
             mol_name = mol_fn_ls[0]
         
         try:
-            mol_num = label2num(mol_name,mode=self.mode)
+            mol_num = label2num(mol_name,self.mode,self.raw_paths[0])
         except KeyError:
             mol_name = mol_fn_ls[0]
-            mol_num = label2num(mol_name,mode=self.mode)
+            mol_num = label2num(mol_name,self.mode,self.raw_paths[0])
             
         l = torch.FloatTensor(self.target.loc[int(mol_num)].tolist()).unsqueeze(0) \
                 if self.mode == 'dev' else torch.LongTensor([int(mol_num)])
@@ -329,6 +287,9 @@ class BaseDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         data, slices = self.collate(data_list)
+        processed_dir = os.path.dirname(self.processed_paths[0])
+        if not os.path.isdir(processed_dir):
+            os.makedirs(processed_dir)
         torch.save((data, slices), self.processed_paths[0])
 
         

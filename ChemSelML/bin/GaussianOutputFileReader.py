@@ -684,7 +684,7 @@ class Gaussian_Output:
                         self._link_202(line_index=-n, line=line, words=words)
                     elif self.__link_103:
                         self._link_103(line_index=-n, line=line, words=words)
-            print('   ____________________\n   ::: Reading %s cost %ss' %
+            print('   ____________________\n   ::: Reading %s cost %.4fs' %
                   (self.fn, time.clock() - t0))
             if hasattr(self, 'DistanceMatrix'):
                 self.DistanceMatrix = self.DistanceMatrix + self.DistanceMatrix.T

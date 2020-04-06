@@ -9,6 +9,7 @@ from torch_geometric.data import InMemoryDataset
 import torch_geometric.transforms as T
 
 from ..bin.BaseDataset import BaseDataset, ElectroNegativityDiff, Complete
+from ..bin.Label2Idx import ArR_label_Idx_Insertion
 
 transform = T.Compose([Complete(), ElectroNegativityDiff(norm=False)])
 
@@ -16,24 +17,25 @@ class ReactionDataset(InMemoryDataset):
     def __init__(self, root, mode='dev', transform=None, pre_transform=None, pre_filter=None):
         self.root = root
         self.mode = mode
-        assert mode in ['dev', 'valid',
-                        'test'], "mode should be dev/valid/test"
+        self.mode_0 = mode.split('_')[0]
+        assert self.mode_0 in ['dev', 'valid',
+                        'test'], "mode_0 should be dev/valid/test"
         super(ReactionDataset, self).__init__(
             root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
-        if self.mode == 'dev':
+        if self.mode_0 == 'dev':
             return [self.mode, '%s/TrainSet_Labels.csv'%self.mode]
-        elif self.mode == 'valid':
+        elif self.mode_0 == 'valid':
             return [self.mode, '%s/ValidSet_Labels.csv'%self.mode]
         else:
             return [self.mode, '%s/TestSet_Labels.csv'%self.mode]
 
     @property
     def processed_file_names(self):
-        return 'ReactionDataset_ArR_%s.pt' % self.mode
+        return '%s/ReactionDataset_ArR_%s.pt' % (self.mode, self.mode)
 
     def download(self):
         return 0
@@ -45,6 +47,7 @@ class ReactionDataset(InMemoryDataset):
         Ar_dataset = BaseDataset(root=self.root, mode='Ar', suffix=self.mode, pre_transform=transform)
         self.R_dataset, self.Ar_dataset = R_dataset, Ar_dataset
 
+        ArR_label_Idx_Insertion(self.raw_paths[1])
         target = pd.read_csv(self.raw_paths[1], index_col=0,
                              usecols=['Reaction_idx', 'Radical_idx', 'Ar_idx', 'loc_idx', 'DG_TS'])
         origin_Ar_loc = Ar_dataset.data.keyAtom_list[:,
@@ -52,6 +55,9 @@ class ReactionDataset(InMemoryDataset):
         tmp_Ar_loc = list(target['Ar_idx']*10 + target['loc_idx'])
         self.Ar_loc_index = (origin_Ar_loc == torch.LongTensor(
             tmp_Ar_loc).unsqueeze(0).transpose(1, 0)).nonzero()[:, 1]
+        check_list = [x for x in tmp_Ar_loc if x not in origin_Ar_loc]
+        if check_list:
+            print(check_list)
         self.Ar_index = (Ar_dataset.data.alias == torch.LongTensor(
             list(target['Ar_idx'])).unsqueeze(0).transpose(1, 0)).nonzero()[:, 1]
         self.R_index = (R_dataset.data.alias == torch.LongTensor(
@@ -75,7 +81,7 @@ class ReactionDataset(InMemoryDataset):
         DG_TS = torch.FloatTensor(self.target.iloc[i].tolist())
 
         data = Data(y=DG_TS)
-        data.ArR_idx = ArR_idx
+        data.ArR_idx = torch.LongTensor([ArR_idx])
 
         for f in local_f:
             Arl_i = self.Ar_loc_index[i]
@@ -118,6 +124,9 @@ class ReactionDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         data, slices = self.collate(data_list)
+        processed_dir = os.path.dirname(self.processed_paths[0])
+        if not os.path.isdir(processed_dir):
+            os.makedirs(processed_dir)
         torch.save((data, slices), self.processed_paths[0])
         
         
@@ -168,6 +177,7 @@ def Transform_DG_to_DDG(TrainSet, scale_ref=5, verbose=True):
         DDG_TS_pd = pd.DataFrame(DDG_TS_ls, columns=DDG_TS_columns)
         DDG_TS_pd['ArR_sel_idx'] = DDG_TS_pd['Radical']*100000 + \
             DDG_TS_pd['Ar']*100 + DDG_TS_pd['locA']*10 + DDG_TS_pd['locB']*1
+        DDG_TS_pd.astype({'ArR_sel_idx': int})
         if verbose:
             print('DDG_TS_pd:', DDG_TS_pd.shape)
 
@@ -198,7 +208,8 @@ class SelectivityDataset(InMemoryDataset):
     def __init__(self, root, mode='dev', transform=None, pre_transform=None, pre_filter=None):
         self.root = root
         self.mode = mode
-        assert mode in ['dev', 'valid',
+        self.mode_0 = mode.split('_')[0]
+        assert self.mode_0 in ['dev', 'valid',
                         'test'], "mode should be dev/valid/test"
         super(SelectivityDataset, self).__init__(
             root, transform, pre_transform, pre_filter)
@@ -206,16 +217,16 @@ class SelectivityDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        if self.mode == 'dev':
+        if self.mode_0 == 'dev':
             return [self.mode, '%s/TrainSet_Labels.csv'%self.mode]
-        elif self.mode == 'valid':
+        elif self.mode_0 == 'valid':
             return [self.mode, '%s/ValidSet_Labels.csv'%self.mode]
         else:
             return [self.mode, '%s/TestSet_Labels.csv'%self.mode]
 
     @property
     def processed_file_names(self):
-        return 'SelectivityDataset_ArR_%s.pt' % self.mode
+        return '%s/SelectivityDataset_ArR_%s.pt' % (self.mode, self.mode)
 
     def download(self):
         return 0
@@ -227,10 +238,11 @@ class SelectivityDataset(InMemoryDataset):
         Ar_dataset = BaseDataset(root=self.root, mode='Ar', suffix=self.mode, pre_transform=transform)
         self.R_dataset, self.Ar_dataset = R_dataset, Ar_dataset
 
+        ArR_label_Idx_Insertion(self.raw_paths[1])
         target = pd.read_csv(self.raw_paths[1], index_col=0,
                              usecols=['Reaction_idx', 'Radical_idx', 'Ar_idx', 'loc_idx', 'DG_TS'])
         DDG_TS = Transform_DG_to_DDG(target, scale_ref=5)
-        DDG_TS.to_csv(r'%s/TrainSet_DDG_Lables.csv'%self.processed_dir)
+        DDG_TS.to_csv(r'%s/Transformed_DDG_Lables.csv'%self.raw_paths[0])
         
         origin_Ar_loc = Ar_dataset.data.keyAtom_list[:,
                              0]*10 + Ar_dataset.data.keyAtom_list[:, 1]
@@ -266,7 +278,7 @@ class SelectivityDataset(InMemoryDataset):
         DDG_TS = torch.FloatTensor(self.target.iloc[i].tolist()).unsqueeze(0)
 
         data = Data(y=DDG_TS)
-        data.ArR_sel_idx = ArR_sel_idx
+        data.ArR_sel_idx = torch.LongTensor([ArR_sel_idx])
 
         for f in local_f:
             Arl_i = self.Ar_locA_index[i]
@@ -312,4 +324,7 @@ class SelectivityDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         data, slices = self.collate(data_list)
+        processed_dir = os.path.dirname(self.processed_paths[0])
+        if not os.path.isdir(processed_dir):
+            os.makedirs(processed_dir)
         torch.save((data, slices), self.processed_paths[0])

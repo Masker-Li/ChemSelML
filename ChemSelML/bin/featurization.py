@@ -7,6 +7,8 @@ from dscribe.descriptors import ACSF
 from dscribe.descriptors import CoulombMatrix
 from dscribe.descriptors import SOAP
 
+from ..bin.Label2Idx import Ar_dict_generator, R_dict_generator
+
 def ascf_Definition(species=None):
     if not species:
         species = ["H", "C", "N", "O", "F", "S"]
@@ -83,7 +85,7 @@ def cm_Definition(n_atoms_max):
         permutation="sorted_l2")
     return cm
 
-cm = cm_Definition(n_atoms_max=29)
+cm = cm_Definition(n_atoms_max=30)
     
 def get_CoulombMatrix(atoms):
     mol_cm = cm.create(atoms)
@@ -120,12 +122,14 @@ class PhyChem:
         assert mode in ['Ar', 'R'], "mode should be Ar/R"
         root = r'/PyScripts/PyTorch.dir/Radical/DataSet/raw'
         if mode == 'Ar':
+            self.Ar_dict = Ar_dict_generator(src_dir='%s/%s/%s'%(root, suffix, 'Ar'))
             self.csv_f = r'%s/%s/%s'%(root, suffix, 'Ar/Ar_phychem.csv')
             self.total_PhyChem_labels = ['Ar_loc_idx', 'E_HOMO', 'E_LUMO', 'm', 'h',
                         's', 'w', 'NICS_0', 'NICS_1', 'NICS_0_ZZ', 'NICS_1_ZZ']
             self.local_PhyChem_labels = ['Ar_loc_idx', 'QN', 'f1', 'f0', 'f_1', 'Df', 'local_S_f0',
                         'maxC-C', 'C-H', 'midC-C', 'aveB', 'BV_3A', 'BV_4A', 'BV_5A']
         else:
+            self.R_dict = R_dict_generator(src_dir='%s/%s/%s'%(root, suffix, 'R'))
             self.csv_f = r'%s/%s/%s'%(root, suffix, 'R/R_phychem.csv')
             self.total_PhyChem_labels = ['R_idx', 'R_E_SOMO', 'R_IE', 'R_EA', 'R_c(-m)', 'R_S']
             self.local_PhyChem_labels = ['R_idx', 'R_QN', 'R_f0', 'R_local_S_f0', 

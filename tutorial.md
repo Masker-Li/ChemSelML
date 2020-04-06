@@ -80,7 +80,7 @@ These packages can be installed directly in batches using CONDA:
   4. Submit files from these two folders to Gaussian Software for calculation and place the resulting output files in the same directory.
   5. Copy **get_PhysOrg.py** to the **Desc_gas_sp and NICS's parent directory A** (for example: **./Example/part_1/Sub/Ar**). Edit **get_PhysOrg.py** and **change the folder absolute path of the project to the  ChemUtils's parent folder (for example the folder absolute path of this tutorial file) in the third line**, then save and close this file. Run it and therein will automatically generate the PhysOrg descriptor in the current directory in the **phychem.csv** file (**for example: ./Example/part_1/Sub/Ar/Ar_phychem.csv**).
          
-    - The purpose of rewriting the third line is to add the absolute path of the directory where ChemUtils is located to the python package search path   
+   - The purpose of rewriting the third line is to add the absolute path of the directory where ChemUtils is located to the python package search path   
         
   > import os  
   > import sys  
@@ -130,26 +130,26 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
 
   5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** in the project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**, which includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
         
-     `import numpy as np
-      import pandas as pd
-      import torch
+          import numpy as np
+          import pandas as pd
+          import torch
 
-      import os
-      import sys
-      # Add the absolute path of the directory where ChemSelML is located to the python package search path
-      sys.path.append("/PyScripts/PyTorch.dir/Radical")
+          import os
+          import sys
+          # Add the absolute path of the directory where ChemSelML is located to the python package search path
+          sys.path.append("/PyScripts/PyTorch.dir/Radical")
 
-      from ChemSelML.bin.ChemSelectivityDataset import ReactionDataset, SelectivityDataset
+          from ChemSelML.bin.ChemSelectivityDataset import ReactionDataset, SelectivityDataset
 
-      # '/PyScripts/PyTorch.dir/Radical/DataSet' corresponds to the "../DataSet" directory in this project.
-      # mode corresponds to the folder name in "../DataSet/raw"
-      dev2_ArR_dataset = ReactionDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
-      print(dev2_ArR_dataset,'\n')
-      print(dev2_ArR_dataset.data,'\n')
+          # '/PyScripts/PyTorch.dir/Radical/DataSet' corresponds to the "../DataSet" directory in this project.
+          # mode corresponds to the folder name in "../DataSet/raw"
+          dev2_ArR_dataset = ReactionDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
+          print(dev2_ArR_dataset,'\n')
+          print(dev2_ArR_dataset.data,'\n')
 
-      dev2_ArR_DDG_dataset = SelectivityDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
-      print(dev2_ArR_DDG_dataset,'\n')
-      print(dev2_ArR_DDG_dataset.data,'\n')`   
+          dev2_ArR_DDG_dataset = SelectivityDataset(root='/PyScripts/PyTorch.dir/Radical/DataSet', mode='dev_2')
+          print(dev2_ArR_DDG_dataset,'\n')
+          print(dev2_ArR_DDG_dataset.data,'\n')  
           
   6. For training task, the created folder names should start with **dev_** and followed by your own suffix identifier, such as **dev_2** and label file should be named with **TrainSet.csv**. And the **test_sub** in the corresponding filename and directory path described in the previous steps will change to **dec_2**.   
 

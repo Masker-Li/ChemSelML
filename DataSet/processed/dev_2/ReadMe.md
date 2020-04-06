@@ -6,12 +6,12 @@ Due to the size of the file, we have compressed the training set data file and t
   - models_pkg/Predictor_SOAP_fp@XGB_Reg_20200328_035409.pkl
 
 And you could execute the following command to restore the original file:  
-      
-  `unzip MolGraph_Ar_dev_2.zip`    
-  `unzip MolGraph_R_dev_2.zip`    
-  `cat ReactionDataset_ArR_dev_2.zip.* | unzip`      
-  `cat SelectivityDataset_ArR_dev_2.zip.* | unzip `      
-  `cd models_pkg`    
-  `cat PhyChem@RF_Reg.zip.* | unzip `    
+         
+    unzip MolGraph_Ar_dev_2.zip    
+    unzip MolGraph_R_dev_2.zip    
+    cat ReactionDataset_ArR_dev_2.zip.* | unzip      
+    cat SelectivityDataset_ArR_dev_2.zip.* | unzip      
+    cd models_pkg    
+    cat PhyChem@RF_Reg.zip.* | unzip     
 
 Once we get the Pt file, we no longer need the structure file. But other files in **../../raw/dev_2** are necessary.

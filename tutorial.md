@@ -45,19 +45,19 @@ These packages can be installed directly in batches using CONDA:
   2. Rearrange the output file of the optimization calculation into a single point calculation input file and place it in a **directory A (for example: ./Example/part_1/Sub/Ar)**. ***Calculation method, functional and basis set*** can be written arbitrarily, and subsequent scripts will automatically correct them.  
     - Tips:  
       - In order to use the scripts for the property calculations, it is recommended that the input files are named in the following format.   
-            For heterocycles:     
-              Ar_n-loc_n-c1-1sp.gjf (such as X4t-1-c1-1sp.gjf)  
-              (Ar_n means the heterocycle's alias,
-              loc_n means one of the atomic order number of the reaction site in heterocycle,
-              c1 means the first conformation，
-              and the sp suffix indicates that it is a single point calculation file.)
-            For Radicals:       
-              R_n-c1-1sp.gjf (such as CF3-c1-1sp.gjf)
+                For heterocycles:     
+                  Ar_n-loc_n-c1-1sp.gjf (such as X4t-1-c1-1sp.gjf)  
+                  (Ar_n means the heterocycle's alias,
+                  loc_n means one of the atomic order number of the reaction site in heterocycle,
+                  c1 means the first conformation，
+                  and the sp suffix indicates that it is a single point calculation file.)
+                For Radicals:       
+                  R_n-c1-1sp.gjf (such as CF3-c1-1sp.gjf)
       - For easy extraction of local descriptors, please add the atomic order number of the reaction site to the title line of the heterocycle's input file.   
-            For example:    
-            in the fifth line of **./Example/part_1/Sub/Ar/X4t-1-c1-1sp.gjf**,    
-            1 and 3 means the first and third atomic order number of the reaction    
-            site in this heterocycle.   
+                  For example:    
+                  in the fifth line of **./Example/part_1/Sub/Ar/X4t-1-c1-1sp.gjf**,    
+                  1 and 3 means the first and third atomic order number of the reaction    
+                  site in this heterocycle.   
         > %nprocshared=28  
         > %mem=56GB  
         > #p aug-cc-pvtz m062x g09def  
@@ -108,18 +108,18 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   3. PhysOrg descriptors file (Ar_phychem.csv and R_phychem.csv) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
   4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the atomic order number of the reaction site in heterocycle **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0.  
       - The schema of the entire sub folder is as follows:  
-                  -- DataSet/raw/test_sub
-                    |-- Ar  
-                    |  |-- gjfs_and_logs  
-                    |  |   |-- Ar1.gjf
-                    |  |   |-- Ar1.log  
-                    |  |-- Ar_phychem.csv  
-                    |-- R  
-                    |  |-- gjfs_and_logs  
-                    |  |   |-- R1.gjf
-                    |  |   |-- R1.log  
-                    |  |-- R_phychem.csv
-                    |-- TestSet_Label.csv
+                          -- DataSet/raw/test_sub
+                            |-- Ar  
+                            |  |-- gjfs_and_logs  
+                            |  |   |-- Ar1.gjf
+                            |  |   |-- Ar1.log  
+                            |  |-- Ar_phychem.csv  
+                            |-- R  
+                            |  |-- gjfs_and_logs  
+                            |  |   |-- R1.gjf
+                            |  |   |-- R1.log  
+                            |  |-- R_phychem.csv
+                            |-- TestSet_Label.csv
       - We have shown the location and contents of relevant documents in **./DataSet/raw/test_sub** folder
       - It is worth noting that the information such as **Ar_n, loc_n and Radical_n** in the label file needs to be recorded in the precursor folders Ar and R as described in the previous steps.
 
@@ -136,10 +136,8 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
   2. For model selection, we've put the relevant code in **./Example/part_4/Benchmark.ipynb**.We have selected different regressors or classifiers according to the requirements to conduct 5-fold cross-validation tests on various combinations of features to compare the performance of each model.
   3. And for model training and test case, we show in detail the training, saving, retuning, and prediction of the entire functional block of the **PhysOrg-RF** and **SOAP/FP(MMFF84)-XGB** models. It is easy for everyone to understand and use. We've put the relevant code in **./Example/part_4/PhysOrg-RF.ipynb** and **./Example/part_4/SOAP/FP(MMFF84)-XGB.ipynb**.   
         - PS.    
-          We provide an output sample, which is placed in the example folder
-          csv output file description:
-              \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.
-              \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model
+                We provide an output sample, which is placed in the example folder
+                csv output file description:   
+                    \*_DDG_Pred_ArR_site_sort_\*.csv: the transformation result of the predicted energy barrier difference of the model into the reference energy barrier result of each site.   
+                    \*_DDG_Pred_site_vs_site_\*.csv: the predicted energy barrier difference of the model   
 
-
-  We have trained models that can be used directly for prediction, but the models are too large to upload to github, and you can email us if you need to get them directly for prediction. The email address is li.xin@zju.edu.cn

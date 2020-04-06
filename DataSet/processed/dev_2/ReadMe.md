@@ -15,3 +15,5 @@ And you could execute the following command to restore the original file with ba
     cat PhyChem@RF_Reg.zip.* | unzip     
 
 Once we get the Pt file, we no longer need the structure file. But other files in **../../raw/dev_2** are necessary.
+   
+Models, charts and figures generated through the training and testing process are also saved in this folder

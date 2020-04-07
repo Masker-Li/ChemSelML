@@ -1,6 +1,6 @@
 ChemSelML
 =====        
-### A trivial demo of chemical regioselectivity prediction via machine learning        
+### Demo of regioselectivity prediction of radical C-H functionalization of heteroarenes via machine learning       
 <br>     
      
 <!-- TOC START min:1 max:3 link:true asterisk:false update:true -->
@@ -48,7 +48,7 @@ These packages can be installed directly in batches using CONDA:
 **Optimization of the molecular structure of reaction precursors (heterocyclic substrates and radicals) and calculation of their quantitative property data**
 
   1. Use quantum chemical software, such as Gaussian 09 or Gaussian 16, to obtain optimized structures at the level of ***B3LYP/6-311+G(2d, p).***
-  2. Rearrange the output file of the optimization calculation into a single point calculation input file and place it in a **directory A (for example: ./Example/part_1/Sub/Ar)**. ***Calculation method, functional and basis set*** can be written arbitrarily, and subsequent scripts will automatically correct them.  
+  2. Perform single point energy calculation based on the optimized structures and place it in a **directory A (for example: ./Example/part_1/Sub/Ar)**. ***Calculation method, functional and basis set*** will be automatically corrected by the following scripts.    
     - Tips:  
       - In order to use the scripts for the property calculations, it is recommended that the input files are named in the following format.   
             
@@ -60,7 +60,7 @@ These packages can be installed directly in batches using CONDA:
                 and the sp suffix indicates that it is a single point calculation file.)
             For Radicals:       
                 R_n-c1-1sp.gjf (such as CF3-c1-1sp.gjf)
-      - For easy extraction of local descriptors, please add the atomic order number of the reaction site to the title line of the heterocycle's input file.     
+      - For the extraction of local descriptors by scripts, please add the number of the target site atom of heteroarene (as in Gaussview or the order of the Cartesian coordinates) to the title line of the input file.     
                      
             For example:    
             in the fifth line of **./Example/part_1/Sub/Ar/X4t-1-c1-1sp.gjf**,    
@@ -98,9 +98,9 @@ These packages can be installed directly in batches using CONDA:
 
 
 ## Part 2  
-**Get SOAP/FP descriptors based on different structures from SMILES**  
+**Get SOAP/FP descriptors based on SMILES**  
 
-The operation in this part is to prepare for the SOAP/FP-XGB model based on diversified structure. You can skip this section if you don't need it.
+The operation in this part is to prepare descriptors for the SOAP/FP-XGB model based on SMILES input. One can skip this section if the SOAP/FP-XGB model prediction is not needed.
 
   1. Generate the SMILES of the structures, and put it in **smi** (**for example: ./Example/part_2/smi**) folder, named Ar.smi and R.smi separately.  
   2. Copy the **GetSOAPFromSMILES.py** script from the **./ChemUtils/test** folder to **smi's parent folder (for example: ./Example/part_2)** and run it to Generate 5 different 3D geometries by RDKit based on SMILES at MMFF94 level. The generated geometries will placed in **Geometry (for example: ./Example/part_2/Geometry)** folder and the descriprors of SOAP/FP will placed in **SOAP (for example: ./Example/part_2/SOAP)** folder.
@@ -113,10 +113,10 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
 **Pre-test/pre-training preparation.**
 
   1. For test task, create a new folder named start with **test_** such as **test_sub in DataSet/raw** folder to put all the required files in it. **test_** is used to indicate that the data in this folder is used for testing and suffix of **sub** is used to distinguish between different test sets. In the next steps, you also need creat some necessary folders as needed.   
-  2. The structure files related to aromatic heterocyclic precursors should be placed in **test_sub/Ar/gjfs_and_logs** and the structure files related to radical precursors should be placed in **test_sub/R/gjfs_and_logs**. These structure files are used to generate a range of other types of descriptors, such as ASCF, SOAP, Fingerprint, etc. Those descriptors could be used in
+  2. The structure files related to aromatic heterocyclic precursors should be placed in **test_sub/Ar/gjfs_and_logs** and the structure files related to radical precursors should be placed in **test_sub/R/gjfs_and_logs**. These structure files are used to generate a range of other types of descriptors, such as ASCF, SOAP, Fingerprint, etc. Those descriptors could be used in model selection process.(**./Example/part_4/Benchmark.ipynb**)   
   Those structure files could be available from the **Desc_gas_sp folder in Part 1** with suffix of **sp.gjf** and **sp.log**.
   3. PhysOrg descriptors file (Ar_phychem.csv and R_phychem.csv) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
-  4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the atomic order number of the reaction site in heterocycle **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0.  
+  4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the number of the target site atom of heteroarene **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0. See examples (**./DataSet/raw/test_sub/TestSet_Label.csv**) for details.   
       - The schema of the entire sub folder is as follows:  
                          
               -- DataSet/raw/test_sub
@@ -134,7 +134,7 @@ The operation in this part is to prepare for the SOAP/FP-XGB model based on dive
       - We have shown the location and contents of relevant documents in **./DataSet/raw/test_sub** folder
       - It is worth noting that the information such as **Ar_n, loc_n and Radical_n** in the label file needs to be recorded in the precursor folders Ar and R as described in the previous steps.
 
-  5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** in the project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**, which includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
+  5. Call the ***ReactionDataset*** and ***SelectivityDataset*** classes in ***ChemSelML.bin.ChemSelectivityDataset*** of this project, it will integrate all information in **./DataSet/raw/test_sub** into one reaction database file **ReactionDataset_ArR_test_sub.pt** and chemical selectivity database file **SelectivityDataset_ArR_test_sub.pt**. These pt files includes various feature categories and target attributes needed for model training or testing. The generated file is located in a folder with the same name as **test_sub** under the **./Dataset/processed** folder. See the example to generate this two file in the **./Example/part_4/PhysOrg-RF.ipynb** file for details. Once these PT files are generated, they can be called multiple times.
         
           import numpy as np
           import pandas as pd

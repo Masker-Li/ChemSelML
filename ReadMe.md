@@ -113,9 +113,9 @@ The operation in this part is to prepare descriptors for the SOAP/FP-XGB model b
 **Pre-test/pre-training preparation.**
 
   1. For test task, create a new folder named start with **test_** such as **test_sub in DataSet/raw** folder to put all the required files in it. **test_** is used to indicate that the data in this folder is used for testing and suffix of **sub** is used to distinguish between different test sets. In the next steps, you also need creat some necessary folders as needed.   
-  2. The structure files related to aromatic heterocyclic precursors should be placed in **test_sub/Ar/gjfs_and_logs** and the structure files related to radical precursors should be placed in **test_sub/R/gjfs_and_logs**. These structure files are used to generate a range of other types of descriptors, such as ASCF, SOAP, Fingerprint, etc. Those descriptors could be used in model selection process.(**./Example/part_4/Benchmark.ipynb**)   
+  2. The structure files related to aromatic heterocyclic precursors should be placed in **test_sub/Ar/gjfs_and_logs** and the structure files related to radical precursors should be placed in **test_sub/R/gjfs_and_logs**. These structure files are used to generate a range of other types of descriptors, such as ASCF, SOAP, Fingerprint, etc. Those descriptors could be used in model selection process.(for example: **./Example/part_4/Benchmark.ipynb**)   
   Those structure files could be available from the **Desc_gas_sp folder in Part 1** with suffix of **sp.gjf** and **sp.log**.
-  3. PhysOrg descriptors file (Ar_phychem.csv and R_phychem.csv) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
+  3. PhysOrg descriptors file (**Ar_phychem.csv and R_phychem.csv**) should alse be placed in corresponding folder.(**test_sub/Ar and test_sub/R**)
   4. We also need a label file **TestSet_Label.csv** which should be placed in **test_sub** to show the data set which chemical reaction combination information is included. The label file needs to be organized by the operator according to his needs, and it mainly records the transition state energy barrier information for training or testing, including heterocyclic aromatic aliases **Ar_n**, the number of the target site atom of heteroarene **loc_n**, radical aliases **Radical_n** and transition state energy barrier **DG_TS** information. For data that only needs to be predicted, **DG_TS** can be filled with 0.0. See examples (**./DataSet/raw/test_sub/TestSet_Label.csv**) for details.   
       - The schema of the entire sub folder is as follows:  
                          
@@ -123,12 +123,14 @@ The operation in this part is to prepare descriptors for the SOAP/FP-XGB model b
                 |-- Ar  
                 |  |-- gjfs_and_logs  
                 |  |   |-- Ar1.gjf
-                |  |   |-- Ar1.log  
+                |  |   |-- Ar1.log 
+                |  |   |-- ...   
                 |  |-- Ar_phychem.csv  
                 |-- R  
                 |  |-- gjfs_and_logs  
                 |  |   |-- R1.gjf
                 |  |   |-- R1.log  
+                |  |   |-- ...   
                 |  |-- R_phychem.csv
                 |-- TestSet_Label.csv
       - We have shown the location and contents of relevant documents in **./DataSet/raw/test_sub** folder

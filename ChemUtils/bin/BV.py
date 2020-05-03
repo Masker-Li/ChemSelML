@@ -18,7 +18,7 @@ def Test(test_radius,pointnumber,AN,x,y,z,atom_rad):
     test_x = r * np.sin(theta) * np.cos(phi)
     test_y = r * np.sin(theta) * np.sin(phi)
     test_z = r * np.cos(theta)
-    test_xyz = np.array([test_x,test_y,test_z]).reshape(-1,3)
+    test_xyz = np.array([test_x,test_y,test_z]).T.reshape(-1,3)
     xyz = np.array([x,y,z]).T
     dist = np.reshape(np.sum(xyz**2,axis=1),(xyz.shape[0],1))+ np.sum(test_xyz**2,axis=1)-2*xyz.dot(test_xyz.T)
     atom_rad = np.array(atom_rad).reshape(-1,1)

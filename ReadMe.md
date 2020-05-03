@@ -3,6 +3,9 @@ ChemSelML
 ### Demo of regioselectivity prediction of radical C-H functionalization of heteroarenes via machine learning       
 <br>     
      
+ A more detailed explanation of the project
+can be found in our [paper](https://doi.org/10.1002/anie.202000959).
+     
 <!-- TOC START min:1 max:3 link:true asterisk:false update:true -->
 - [Project Requirements](#project-requirements)
 - [Project Features and User Guide](#project-features-and-user-guide)

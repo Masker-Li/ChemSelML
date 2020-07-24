@@ -6,3 +6,4 @@ PM7 folder will save the Gaussian input files which be need calculated, and the 
 
 After preparing all geometry files, we need call "GetSOAP" function or "GetSOAPwithFP" to generate SOAP(or SOAP with molecular fingerprint) describes. Calling "Get_Key_atom_num" function will generate key positions infomation that needed when generate SOAP. "Get_Key_atom_num" function judge key positions at a molecules through bond connection information, if there is geometric partly in a molecule, we need judge key positions information by ourselves and add them to dictionary variable "special" in this function.
 
+Here, the files in **smi** are consistent with the rest of the example, and **smi_all** holds the SMILES of all the structures used in our training set.

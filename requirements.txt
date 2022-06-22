@@ -8,7 +8,7 @@ joblib=0.13.2=py36_0
 matplotlib=3.1.2=pypi_0
 molml=0.9.0=pypi_0
 networkx=2.3=py_0
-numpy=1.17.4=pypi_0
+numpy=1.22.4=pypi_0
 openbabel=3.0.0=py36h1360c68_0
 pandas=0.25.0=py36hb3f55d8_0
 pathlib=1.0.1=pypi_0

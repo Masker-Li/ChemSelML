@@ -1,7 +1,7 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
-ase=3.22.0
+ase=3.15.0
 bidict=0.18.3
 dscribe=0.2.9
 joblib=0.13.2

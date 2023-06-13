@@ -24,7 +24,7 @@ These packages can be installed directly in batches using CONDA:
     ase=3.22.0
     bidict=0.18.3
     dscribe=0.2.9
-    joblib=0.13.2
+    joblib=1.1.1
     matplotlib=3.1.2
     molml=0.9.0
     networkx=2.3
